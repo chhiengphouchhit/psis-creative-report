@@ -2913,24 +2913,53 @@ function fallbackHeuristicExtraction(url) {
   let banner = document.getElementById('aiLoadingBanner');
   let isGitHub = window.location.hostname.includes('github.io');
 
-  if (banner) {
-    banner.style.background = '#fff8e6';
-    banner.style.borderColor = '#fedfa6';
-    banner.innerHTML = `
-      <div style="font-size:20px;color:#915700">💡</div>
-      <div>
-        <div style="font-weight:700;color:#915700;font-size:13px">${isGitHub ? 'នៅលើ GitHub Pages មិនមាន Backend Scraper ឡើយ' : 'មិនអាចទាញយករូបពិតពី Link នេះបានទេ'}</div>
-        <div style="font-size:11px;color:#78350f">សូមចុច <b>Ctrl+V</b> ដើម្បី Paste រូប Screenshots ឬចុច <b>Upload Screenshot</b> ផ្ទាល់ខ្លួន។</div>
-      </div>`;
-  }
-
   let titleEl = document.getElementById('aiWorkTitle');
   if (titleEl && (!titleEl.value || titleEl.value.includes('កំពុងទាញយក'))) {
     let slug = url.split('/').filter(Boolean).pop() || 'Media';
     titleEl.value = 'Creative Media Production - ' + slug.replace(/[^a-zA-Z0-9_-]/g, ' ');
   }
 
-  useFallbackCanvasThumb();
+  if (isGitHub) {
+    if (banner) {
+      banner.style.background = '#fffbeb';
+      banner.style.borderColor = '#fde68a';
+      banner.innerHTML = `
+        <div style="font-size:22px;color:#d97706">⚠️</div>
+        <div>
+          <div style="font-weight:700;color:#92400e;font-size:13px">លោកអ្នកកំពុងប្រើប្រាស់លើ GitHub Pages (គ្មាន Python Backend)</div>
+          <div style="font-size:11px;color:#78350f;margin-top:2px">
+            • <b>ដើម្បីទាញយករូបភាពពិតដោយស្វ័យប្រវត្តិ</b>៖ សូមបើកតាម <a href="http://localhost:8080/01_PSIS_Creative_Report_System.html" target="_blank" style="color:#1d4ed8;font-weight:700;text-decoration:underline">http://localhost:8080</a> នៅលើកុំព្យូទ័រផ្ទាល់ខ្លួន (មាន Python Server)<br>
+            • <b>នៅលើ GitHub Pages នេះ</b>៖ គ្រាន់តែ Right-click លើ Facebook Copy Image រួចចុច <b>Ctrl + V</b> នៅទីនេះ!
+          </div>
+        </div>`;
+    }
+
+    let statusEl = document.getElementById('aiThumbStatus');
+    if (statusEl) {
+      statusEl.style.color = '#d97706';
+      statusEl.innerHTML = '📋 សូមចុច <b>Ctrl+V</b> ដើម្បី Paste រូបភាពពី Facebook (ឬចុច Upload)';
+    }
+
+    let placeholder = document.getElementById('aiThumbPlaceholder');
+    if (placeholder) {
+      placeholder.innerHTML = `
+        <div style="font-size:28px">📋</div>
+        <div style="font-weight:700;color:#122297;font-size:12px">សូមចុច Ctrl + V ដើម្បី Paste រូប</div>
+        <div style="font-size:10px;color:#65708a">Copy Image ពី Facebook រួចចុច Ctrl+V</div>`;
+    }
+  } else {
+    if (banner) {
+      banner.style.background = '#fff8e6';
+      banner.style.borderColor = '#fedfa6';
+      banner.innerHTML = `
+        <div style="font-size:20px;color:#915700">💡</div>
+        <div>
+          <div style="font-weight:700;color:#915700;font-size:13px">មិនអាចទាញយករូបភាពពី Link នេះបានទេ</div>
+          <div style="font-size:11px;color:#78350f">សូមចុច <b>Ctrl+V</b> ដើម្បី Paste រូប Screenshots ឬចុច <b>Upload Screenshot</b> ផ្ទាល់ខ្លួន។</div>
+        </div>`;
+    }
+    useFallbackCanvasThumb();
+  }
 }
 
 function setThumbPreview(dataUri, statusText) {
