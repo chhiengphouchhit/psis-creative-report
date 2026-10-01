@@ -185,7 +185,25 @@ button,input,select,textarea{font:inherit;font-family:'Poppins','Noto Sans Khmer
   </section>
 
   <section id="team" class="page"><div class="grid two" id="teamCards"></div></section>
-  <section id="projects" class="page"><div class="grid three" id="projectCards"></div></section>
+  <section id="projects" class="page">
+    <div class="card" style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;border:none;margin-bottom:20px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,0.15)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;padding:8px 4px">
+        <div>
+          <div style="font-size:11px;font-weight:800;color:#38bdf8;text-transform:uppercase;letter-spacing:1px">Campus &amp; Campaign Portfolio</div>
+          <h2 style="font-size:22px;color:#fff;margin:4px 0;display:flex;align-items:center;gap:10px">
+            <span>📁</span> ការគ្រប់គ្រងគម្រោង (Project Management)
+          </h2>
+          <div style="font-size:13px;opacity:0.85">បង្កើតគម្រោងថ្មី បំពេញព័ត៌មាន កំណត់ទិសដៅការងារ (Target Output) និងតាមដានវឌ្ឍនភាពតាមសាខា</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button type="button" class="btn" style="background:#38bdf8;color:#0f172a;font-weight:800;border:none;padding:10px 18px;border-radius:10px;box-shadow:0 4px 14px rgba(56,189,248,0.3);cursor:pointer" onclick="openProjectModal()">
+            ➕ បន្ថែមគម្រោងថ្មី (Add Project)
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="grid three" id="projectCards"></div>
+  </section>
 
   
     <section id="boosting" class="page">
@@ -323,6 +341,24 @@ const PEOPLE=[
 const PROJECTS=['PSIS PP','AYLA BTB','AYLA x PSIS (Joint Campus)','ELIF'];
 const CATEGORIES=['Design','Video Filming','Video Editing','Photography','Content Creative','Content Planning','Boosting','Script Writing','Script Revision','Team Support','Mentoring','Other'];
 const STATUSES=['Planned','In Progress','Completed','Delayed','Cancelled'];
+const DEFAULT_PROJECTS = [
+  { id: 'p_psis_pp', name: 'PSIS PP', campus: 'Phnom Penh', lead: 'Chhieng Phouhhit', targetOutput: 65, color: '#122297', desc: 'ប្រតិបត្តិការ Content & Visual ប្រចាំសាខារាជធានីភ្នំពេញ' },
+  { id: 'p_ayla_btb', name: 'AYLA BTB', campus: 'Battambang', lead: 'Man Sivleng', targetOutput: 25, color: '#0284c7', desc: 'ផលិតកម្មវីដេអូ Reels, TikTok & Branding ប្រចាំសាខាបាត់ដំបង' },
+  { id: 'p_joint', name: 'AYLA x PSIS (Joint Campus)', campus: 'Joint / សហការ', lead: 'Chhit × Sivleng', targetOutput: 5, color: '#d97706', desc: 'យុទ្ធនាការសហការរួមអន្តរសាខា ភ្នំពេញ x បាត់ដំបង' },
+  { id: 'p_elif', name: 'ELIF', campus: 'Phnom Penh', lead: 'Creative Team', targetOutput: 5, color: '#059669', desc: 'កម្មវិធីសិក្សា និងសកម្មភាពថ្នាក់ដំបូង ELIF Program' }
+];
+
+function getProjectList() {
+  if (typeof state !== 'undefined' && state && Array.isArray(state.projects) && state.projects.length > 0) {
+    return state.projects;
+  }
+  return DEFAULT_PROJECTS;
+}
+
+function getProjectNames() {
+  return getProjectList().map(p => typeof p === 'string' ? p : p.name);
+}
+
 let state=load();
 let history=[], future=[];
 function blank(){return {month:new Date().toISOString().slice(0,7),title:'Creative & Content Team Monthly Report',driveUrl:'https://drive.google.com/drive/folders/1Cdu9FK8xv-HFeyu6j8G3Uw8d0aS_M0zp?usp=sharing',summary:'',challenges:'',next:'',works:[],evidence:[]}}
@@ -394,7 +430,7 @@ document.getElementById('modalBody').innerHTML=`<div class="form">
   <label style="color:#122297;font-size:11px;font-weight:700">🤝 Role Breakdown (ការបែងចែកការងារក្នុង Task នេះ):</label>
   <input id="wCollabRoles" value="${esc(w.collabRoles || 'Chhit: គិត Content/Idea | Sivleng: ដើរតួ & កាត់ត')}" style="margin-top:4px;font-size:12px" placeholder="ឧ. Chhit: គិត Content | Sivleng: ដើរតួរ & កាត់ត">
 </div>
-<div class="row"><div><label>Project</label><select id="wProject">${PROJECTS.map(p=>`<option ${p===w.project?'selected':''}>${p}</option>`).join('')}</select></div><div><label>Work Type</label><select id="wCategory">${CATEGORIES.map(p=>`<option ${p===w.category?'selected':''}>${p}</option>`).join('')}</select></div></div>
+<div class="row"><div><label>Project</label><select id="wProject">${getProjectNames().map(p=>`<option ${p===w.project?'selected':''}>${p}</option>`).join('')}</select></div><div><label>Work Type</label><select id="wCategory">${CATEGORIES.map(p=>`<option ${p===w.category?'selected':''}>${p}</option>`).join('')}</select></div></div>
 <div class="row"><div><label>Status</label><select id="wStatus">${STATUSES.map(p=>`<option ${p===w.status?'selected':''}>${p}</option>`).join('')}</select></div><div><label>Output Quantity</label><input type="number" min="0" id="wOutput" value="${w.output||0}"></div></div>
 <div class="row"><div><label>Date</label><input type="date" id="wDate" value="${w.date||''}"></div><div><label>Result / Metric</label><input id="wResult" value="${esc(w.result||'')}" placeholder="e.g. 85K views / 1 final video"></div></div>
 <div><label>Notes / Feedback</label><textarea id="wNotes">${esc(w.notes||'')}</textarea></div>
@@ -441,7 +477,7 @@ document.getElementById('workTable').innerHTML=arr.length?arr.map(w=>{
 }
 function renderFilters(){
 let fill=(id,arr)=>{let e=document.getElementById(id);if(!e)return;let old=e.value;e.innerHTML='<option value="">All</option>'+arr.map(x=>`<option>${esc(x)}</option>`).join('');e.value=old};
-fill('filterPerson',[...PEOPLE.map(x=>x.name),'Joint: Chhit (Content) + Sivleng (Acting/Edit)','Team Collaboration']);fill('filterProject',PROJECTS);fill('filterCategory',CATEGORIES);fill('filterStatus',STATUSES);
+fill('filterPerson',[...PEOPLE.map(x=>x.name),'Joint: Chhit (Content) + Sivleng (Acting/Edit)','Team Collaboration']);fill('filterProject', getProjectNames());fill('filterCategory',CATEGORIES);fill('filterStatus',STATUSES);
 }
 function renderDashboard(){
 let works=state.works, output=works.reduce((a,w)=>a+(Number(w.output)||0),0), completed=works.filter(w=>w.status==='Completed').length, evidence=state.evidence.length, projects=new Set(works.map(w=>w.project)).size;
@@ -3202,6 +3238,160 @@ function initPcMemorySync() {
 }
 initPcMemorySync();
 // ==================== END NEW MONTH MANAGEMENT ====================
+
+
+
+
+function openProjectModal(id = null) {
+  const projs = getProjectList();
+  const p = id ? (projs.find(x => x.id === id) || { id, name: id }) : {
+    id: '',
+    name: '',
+    campus: 'Phnom Penh',
+    lead: (PEOPLE && PEOPLE[0]) ? PEOPLE[0].name : '',
+    targetOutput: 10,
+    color: '#122297',
+    desc: ''
+  };
+
+  document.getElementById('modalTitle').textContent = id ? '✏️ កែប្រែព័ត៌មានគម្រោង (Edit Project)' : '➕ បន្ថែមគម្រោងថ្មី (Add New Project)';
+
+  let campusOptions = ['Phnom Penh', 'Battambang', 'Joint / សហការ', 'Online / Media', 'Special Events']
+    .map(c => `<option ${(p.campus === c) ? 'selected' : ''}>${c}</option>`).join('');
+
+  let leadOptions = (PEOPLE || []).map(lead => `<option ${(p.lead === lead.name) ? 'selected' : ''}>${lead.name}</option>`).join('') +
+    `<option value="Joint: Chhit x Sivleng" ${p.lead && p.lead.includes('Joint') ? 'selected' : ''}>🤝 Joint Team Collaboration</option>` +
+    `<option value="Creative Team" ${p.lead === 'Creative Team' ? 'selected' : ''}>👥 Creative Team</option>`;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form" style="font-family:'Poppins','Noto Sans Khmer',sans-serif">
+      <div style="background:#f0f7ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px;margin-bottom:12px;font-size:12.5px;color:#1e40af">
+        💡 <b>ចំណាំ៖</b> បន្ទាប់ពីបង្កើតរួច ឈ្មោះគម្រោងនេះនឹងបង្ហាញដោយស្វ័យប្រវត្តិក្នងបញ្ជីជ្រើសរើស (Dropdown) ពេល Add Work និង Filter ផ្សេងៗ។
+      </div>
+
+      <div class="row">
+        <div>
+          <label style="font-weight:700">ឈ្មោះគម្រោង (Project Name) <span style="color:#ef4444">*</span></label>
+          <input id="projNameInput" value="${esc(p.name)}" placeholder="ឧ. PSIS PP, AYLA BTB, Campaign Back to School">
+        </div>
+        <div>
+          <label style="font-weight:700">សាខា / ទីតាំង (Campus / Location)</label>
+          <select id="projCampusInput">${campusOptions}</select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label style="font-weight:700">អ្នកទទួលខុសត្រូវ (Project Lead)</label>
+          <select id="projLeadInput">${leadOptions}</select>
+        </div>
+        <div>
+          <label style="font-weight:700">គោលដៅផលិតកម្មប្រចាំខែ (Target Output Units)</label>
+          <input type="number" min="1" id="projTargetInput" value="${p.targetOutput || 10}">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label style="font-weight:700">ពណ៌សម្គាល់ (Color Accent)</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" id="projColorInput" value="${p.color || '#122297'}" style="width:48px;height:38px;padding:2px;cursor:pointer">
+            <span style="font-size:12px;color:#64748b">ជ្រើសរើសពណ៌សម្រាប់ Card និង Progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label style="font-weight:700">ការពិពណ៌នាអំពីគម្រោង (Project Description &amp; Scope)</label>
+        <textarea id="projDescInput" rows="3" placeholder="ឧ. ផលិតកម្ម Content, Visual, Poster និងវីដេអូសម្រាប់ផ្សព្វផ្សាយ...">${esc(p.desc || '')}</textarea>
+      </div>
+
+      <button type="button" class="btn primary" onclick="saveProject('${p.id || ''}')" style="width:100%;padding:10px;font-weight:700;font-size:14px;margin-top:6px">
+        💾 ${id ? 'រក្សាទុកការកែប្រែ (Update Project)' : 'បង្កើតគម្រោងថ្មី (Create Project)'}
+      </button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+function saveProject(id) {
+  let name = document.getElementById('projNameInput')?.value.trim();
+  if (!name) return alert('សូមបញ្ចូលឈ្មោះគម្រោង (Project Name)!');
+
+  let campus = document.getElementById('projCampusInput')?.value || 'Phnom Penh';
+  let lead = document.getElementById('projLeadInput')?.value || 'Creative Team';
+  let targetOutput = parseInt(document.getElementById('projTargetInput')?.value, 10) || 10;
+  let color = document.getElementById('projColorInput')?.value || '#122297';
+  let desc = document.getElementById('projDescInput')?.value.trim() || '';
+
+  // Initialize state.projects if needed
+  if (!state.projects || !state.projects.length) {
+    state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+  }
+
+  if (id) {
+    let existing = state.projects.find(x => x.id === id || x.name === id);
+    if (existing) {
+      existing.name = name;
+      existing.campus = campus;
+      existing.lead = lead;
+      existing.targetOutput = targetOutput;
+      existing.color = color;
+      existing.desc = desc;
+    } else {
+      state.projects.push({ id: id || 'p_' + Date.now(), name, campus, lead, targetOutput, color, desc });
+    }
+  } else {
+    // Check if name already exists
+    if (state.projects.some(x => x.name.toLowerCase() === name.toLowerCase())) {
+      return alert('ឈ្មោះគម្រោងនេះមានរួចហើយ! សូមដាក់ឈ្មោះផ្សេង។');
+    }
+    state.projects.push({
+      id: 'p_' + Date.now(),
+      name,
+      campus,
+      lead,
+      targetOutput,
+      color,
+      desc
+    });
+  }
+
+  save();
+  closeModal();
+  renderAll();
+  toast('✓ បានរក្សាទុកគម្រោង: ' + name);
+}
+
+function deleteProject(id) {
+  let projs = getProjectList();
+  let target = projs.find(x => x.id === id || x.name === id);
+  if (!target) return;
+
+  let assignedCount = (state.works || []).filter(w => w.project === target.name).length;
+  let msg = 'តើអ្នកពិតជាចង់លុបគម្រោង "' + target.name + '" ឬ?';
+  if (assignedCount > 0) {
+    msg += '\n\n⚠️ បច្ចុប្បន្នមាន ' + assignedCount + ' Task ដែលកំពុងប្រើប្រាស់គម្រោងនេះ!';
+  }
+
+  if (!confirm(msg)) return;
+
+  if (!state.projects || !state.projects.length) {
+    state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+  }
+  state.projects = state.projects.filter(x => x.id !== id && x.name !== target.name);
+  save();
+  renderAll();
+  toast('បានលុបគម្រោង: ' + target.name);
+}
+
+function openWorkForProject(projName) {
+  openWork();
+  setTimeout(() => {
+    let el = document.getElementById('wProject');
+    if (el) el.value = projName;
+  }, 50);
+}
 
 </script>
 </body>
